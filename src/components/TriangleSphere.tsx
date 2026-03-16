@@ -188,8 +188,9 @@ export default function TriangleSphere() {
     <Canvas
       camera={{ position: [0, 0, 7], fov: 50 }}
       style={{ width: "100%", height: "100%", cursor: "grab", touchAction: "pan-y" }}
-      gl={{ alpha: true, antialias: device === "desktop" }}
+      gl={{ alpha: true, antialias: device === "desktop", powerPreference: "high-performance" }}
       dpr={DEVICE_CONFIG[device].dpr}
+      frameloop="always"
     >
       <TriangleSphereInner device={device} />
     </Canvas>

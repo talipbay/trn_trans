@@ -145,7 +145,7 @@
     @apply bg-background text-foreground;
   }
   html {
-    @apply font-sans;
+    @apply font-sans scroll-smooth;
   }
 }
 
@@ -163,36 +163,4 @@
   animation: train-scroll 25s linear infinite;
 }
 
-/* Scroll reveal animations */
-@keyframes reveal-up {
-  from { opacity: 0; transform: translateY(24px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-@keyframes reveal-left {
-  from { opacity: 0; transform: translateX(-24px); }
-  to { opacity: 1; transform: translateX(0); }
-}
-@keyframes reveal-right {
-  from { opacity: 0; transform: translateX(24px); }
-  to { opacity: 1; transform: translateX(0); }
-}
-@keyframes reveal-scale {
-  from { opacity: 0; transform: scale(0.95); }
-  to { opacity: 1; transform: scale(1); }
-}
-
-.scroll-hidden {
-  opacity: 0;
-}
-.scroll-reveal-up {
-  animation: reveal-up 0.9s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-}
-.scroll-reveal-left {
-  animation: reveal-left 0.9s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-}
-.scroll-reveal-right {
-  animation: reveal-right 0.9s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-}
-.scroll-reveal-scale {
-  animation: reveal-scale 0.9s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-}
+/* Scroll reveal — handled via JS transitions, no CSS classes needed */

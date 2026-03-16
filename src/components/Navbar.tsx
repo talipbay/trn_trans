@@ -5,7 +5,7 @@ import Image from "next/image";
 
 const NAV_LINKS = [
   { label: "О компании", href: "#about" },
-  { label: "Услуги", href: "#services" },
+  { label: "Заявка", href: "#contact-form" },
   { label: "Контакты", href: "#contacts" },
 ];
 

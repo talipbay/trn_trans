@@ -2,11 +2,6 @@
 
 import { useEffect, useRef, useState } from "react";
 
-/**
- * OPTION A: Animated Train Route Line
- * A horizontal SVG line that draws itself on scroll with triangle station markers.
- */
-
 const STATIONS = [
   "Алматы",
   "Астана",
@@ -18,36 +13,40 @@ const STATIONS = [
 export default function TrainRoute() {
   const ref = useRef<HTMLDivElement>(null);
   const [progress, setProgress] = useState(0);
+  const maxProgress = useRef(0);
 
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
 
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          const ratio = entry.intersectionRatio;
-          setProgress(Math.min(ratio * 2.5, 1));
-        }
-      },
-      { threshold: Array.from({ length: 20 }, (_, i) => i / 20) }
-    );
-
-    observer.observe(el);
-
-    const onScroll = () => {
-      if (!el) return;
+    const updateProgress = () => {
       const rect = el.getBoundingClientRect();
       const viewH = window.innerHeight;
-      const p = Math.max(0, Math.min(1, 1 - (rect.top - viewH * 0.3) / (viewH * 0.5)));
-      setProgress(p);
+      
+      // Calculate progress based on element position
+      const start = viewH * 0.8;
+      const end = viewH * 0.2;
+      const current = rect.top;
+      
+      let p = 0;
+      if (current <= start && current >= end) {
+        p = (start - current) / (start - end);
+      } else if (current < end) {
+        p = 1;
+      }
+      
+      // Only allow progress to increase (no going backwards)
+      if (p > maxProgress.current) {
+        maxProgress.current = p;
+        setProgress(p);
+      }
     };
 
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => {
-      observer.disconnect();
-      window.removeEventListener("scroll", onScroll);
-    };
+    // Initial check
+    updateProgress();
+
+    window.addEventListener("scroll", updateProgress, { passive: true });
+    return () => window.removeEventListener("scroll", updateProgress);
   }, []);
 
   return (
@@ -59,14 +58,20 @@ export default function TrainRoute() {
 
           {/* Animated progress line */}
           <div
-            className="absolute left-0 top-1/2 h-[3px] -translate-y-1/2 bg-tam-blue transition-all duration-700 ease-out"
-            style={{ width: `${progress * 100}%` }}
+            className="absolute left-0 top-1/2 h-[3px] -translate-y-1/2 bg-tam-blue"
+            style={{ 
+              width: `${progress * 100}%`,
+              transition: "width 0.5s cubic-bezier(0.22, 1, 0.36, 1)"
+            }}
           />
 
-          {/* Train icon on the line */}
+          {/* Train icon */}
           <div
-            className="absolute top-1/2 -translate-x-1/2 -translate-y-1/2 transition-all duration-700 ease-out"
-            style={{ left: `${progress * 100}%` }}
+            className="absolute top-1/2 -translate-x-1/2 -translate-y-1/2"
+            style={{ 
+              left: `${progress * 100}%`,
+              transition: "left 0.5s cubic-bezier(0.22, 1, 0.36, 1)"
+            }}
           >
             <div className="flex h-8 w-8 items-center justify-center rounded-full bg-tam-blue shadow-lg shadow-tam-blue/30">
               <svg className="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -85,14 +90,24 @@ export default function TrainRoute() {
                 className="absolute top-1/2 -translate-x-1/2 flex flex-col items-center"
                 style={{ left: `${x}%` }}
               >
-                {/* Triangle marker */}
-                <div className={`-translate-y-[18px] transition-colors duration-500 ${active ? "text-tam-blue" : "text-tam-grey"}`}>
+                <div 
+                  className="-translate-y-[18px]"
+                  style={{
+                    color: active ? "#1422D2" : "#CED8E4",
+                    transition: "color 0.4s ease"
+                  }}
+                >
                   <svg width="12" height="12" viewBox="0 0 12 12">
                     <polygon points="0,0 12,0 0,12" fill="currentColor" />
                   </svg>
                 </div>
-                {/* Station name */}
-                <span className={`mt-4 text-xs font-medium transition-colors duration-500 ${active ? "text-tam-black" : "text-tam-black/30"}`}>
+                <span 
+                  className="mt-4 text-xs font-medium"
+                  style={{
+                    color: active ? "#333333" : "rgba(51,51,51,0.3)",
+                    transition: "color 0.4s ease"
+                  }}
+                >
                   {name}
                 </span>
               </div>

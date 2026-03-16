@@ -79,8 +79,8 @@ export default function Home() {
 
           {/* Description + stats row */}
           <div className="mb-16 grid items-start gap-12 lg:grid-cols-5">
-            <ScrollReveal direction="left" delay={100}>
-              <p className="text-lg leading-relaxed text-tam-black/70 lg:col-span-3">
+            <ScrollReveal direction="left" delay={100} className="lg:col-span-3">
+              <p className="text-lg leading-relaxed text-tam-black/70">
                 Транспортно-логистическая компания, предоставляющая услуги по перевозке грузов железнодорожным и автотранспортом
               </p>
             </ScrollReveal>
@@ -99,7 +99,7 @@ export default function Home() {
           </div>
 
           {/* Points */}
-          <div className="grid gap-0 divide-y sm:grid-cols-3 sm:divide-x sm:divide-y-0 divide-tam-grey/60">
+          <div className="grid gap-8 sm:grid-cols-3">
             {ABOUT_ITEMS.map((item, i) => (
               <ScrollReveal key={i} direction="up" delay={i * 150}>
                 <div className="group flex flex-col gap-4 px-8 py-8 first:pl-0 last:pr-0 max-sm:px-0 transition-all">
@@ -122,7 +122,7 @@ export default function Home() {
       <MosaicDivider color="#1422D2" height={40} className="block" />
 
       {/* Contact Form */}
-      <section className="relative bg-tam-grey/30 py-24 overflow-hidden">
+      <section id="contact-form" className="relative bg-tam-grey/30 py-24 overflow-hidden">
         {/* Sparse grid background for the whole section */}
         <div className="pointer-events-none absolute inset-0">
           <SparseGridPattern color="#1D90F9" opacity={0.05} size={4} gap={28} />
