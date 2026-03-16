@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import logo from "../../public/logo_blue.png";
 
 const NAV_LINKS = [
   { label: "О компании", href: "#about" },
@@ -17,7 +18,7 @@ export default function Navbar() {
       <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
         {/* Logo */}
         <a href="#" className="flex items-center">
-          <Image src="/logo_blue.png" alt="TRN Trans" width={120} height={32} className="h-8 w-auto brightness-0 invert" priority />
+          <Image src={logo} alt="TRN Trans" width={120} height={32} className="h-8 w-auto brightness-0 invert" priority />
         </a>
 
         {/* Desktop links */}
