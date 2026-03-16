@@ -1,65 +1,243 @@
-import Image from "next/image";
+"use client";
+
+import dynamic from "next/dynamic";
+import Navbar from "@/components/Navbar";
+import {
+  SparseGridPattern,
+  DenseGradientPattern,
+  ScatteredPattern,
+  MosaicDivider,
+} from "@/components/TrianglePatterns";
+import TrainRoute from "@/components/TrainRoute";
+import TrainTicker from "@/components/TrainTicker";
+
+const TriangleSphere = dynamic(() => import("@/components/TriangleSphere"), {
+  ssr: false,
+});
+
+const ABOUT_ITEMS = [
+  {
+    icon: (
+      <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" />
+      </svg>
+    ),
+    title: "Опыт и экспертиза",
+    text: "Команда профессионалов, зарекомендовавшая себя на рынке Евразии с опытом работы более 10 лет",
+  },
+  {
+    icon: (
+      <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 18.75a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 01-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 00-3.213-9.193 2.056 2.056 0 00-1.58-.86H14.25M16.5 18.75h-2.25m0-11.177v-.958c0-.568-.422-1.048-.987-1.106a48.554 48.554 0 00-10.026 0 1.106 1.106 0 00-.987 1.106v7.635m12-6.677v6.677m0 4.5v-4.5m0 0h-12" />
+      </svg>
+    ),
+    title: "Перевозки «под ключ»",
+    text: "Организация перевозок «под ключ» для вашего бизнеса",
+  },
+  {
+    icon: (
+      <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.455 2.456L21.75 6l-1.036.259a3.375 3.375 0 00-2.455 2.456zM16.894 20.567L16.5 21.75l-.394-1.183a2.25 2.25 0 00-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 001.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 001.423 1.423l1.183.394-1.183.394a2.25 2.25 0 00-1.423 1.423z" />
+      </svg>
+    ),
+    title: "Консультации",
+    text: "Возможность оказания консультаций по технологическим ж/д процессам",
+  },
+];
 
 export default function Home() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+    <>
+      <Navbar />
+
+      {/* Hero */}
+      <section className="relative flex min-h-screen items-center justify-center overflow-hidden bg-tam-blue">
+        <div className="absolute inset-x-0 top-1/2 h-[90vh] -translate-y-1/2 sm:h-[90vh] max-sm:h-auto max-sm:aspect-square max-sm:w-full">
+          <TriangleSphere />
+        </div>
+      </section>
+
+      {/* About */}
+      <section id="about" className="relative bg-white py-24 overflow-hidden">
+        {/* Sparse grid background pattern */}
+        <div className="pointer-events-none absolute inset-0">
+          <SparseGridPattern color="#1422D2" opacity={0.04} size={5} gap={32} />
+        </div>
+        <div className="relative mx-auto max-w-6xl px-6">
+          <div className="mb-16 max-w-2xl">
+            <p className="mb-3 text-sm font-semibold uppercase tracking-widest text-tam-mint">
+              О компании
+            </p>
+            <h2 className="mb-6 text-4xl font-semibold tracking-tight text-tam-black sm:text-5xl">
+              TRN Trans
+            </h2>
+            <div className="mb-0 h-1 w-16 rounded-full bg-tam-blue" />
+          </div>
+
+          {/* Description + stats row */}
+          <div className="mb-16 grid items-start gap-12 lg:grid-cols-5">
+            <p className="text-lg leading-relaxed text-tam-black/70 lg:col-span-3">
+              Транспортно-логистическая компания, предоставляющая услуги по перевозке грузов железнодорожным и автотранспортом
+            </p>
+            <div className="flex gap-12 lg:col-span-2 lg:justify-end">
+              <div>
+                <p className="text-4xl font-bold text-tam-blue">10+</p>
+                <p className="mt-1 text-sm text-tam-black/50">лет на рынке</p>
+              </div>
+              <div>
+                <p className="text-4xl font-bold text-tam-blue">200</p>
+                <p className="mt-1 text-sm text-tam-black/50">вагонов</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Points */}
+          <div className="grid gap-0 divide-y sm:grid-cols-3 sm:divide-x sm:divide-y-0 divide-tam-grey/60">
+            {ABOUT_ITEMS.map((item, i) => (
+              <div
+                key={i}
+                className="group flex flex-col gap-4 px-8 py-8 first:pl-0 last:pr-0 max-sm:px-0 transition-all"
+              >
+                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-tam-blue/10 text-tam-blue transition-colors group-hover:bg-tam-blue group-hover:text-white">
+                  {item.icon}
+                </div>
+                <h3 className="text-lg font-semibold text-tam-black">{item.title}</h3>
+                <p className="text-base leading-relaxed text-tam-black/60">{item.text}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Animated train route */}
+      <TrainRoute />
+
+      {/* Mosaic divider */}
+      <MosaicDivider color="#1422D2" height={40} className="block" />
+
+      {/* Contact Form */}
+      <section className="relative bg-tam-grey/30 py-24 overflow-hidden">
+        {/* Sparse grid background for the whole section */}
+        <div className="pointer-events-none absolute inset-0">
+          <SparseGridPattern color="#1D90F9" opacity={0.05} size={4} gap={28} />
+        </div>
+        <div className="relative mx-auto max-w-6xl px-6">
+          <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
+            {/* Left side - text */}
+            <div>
+              <p className="mb-2 text-sm font-semibold uppercase tracking-widest text-tam-mint">
+                Обратная связь
+              </p>
+              <h2 className="mb-6 text-3xl font-semibold tracking-tight text-tam-black sm:text-4xl">
+                Оставьте заявку
+              </h2>
+              <p className="mb-8 max-w-md text-base leading-relaxed text-tam-black/70">
+                Заполните форму, и наши специалисты свяжутся с вами в ближайшее время для обсуждения деталей сотрудничества.
+              </p>
+            </div>
+
+            {/* Right side - form */}
+            <div className="relative overflow-hidden rounded-3xl bg-white p-8 shadow-xl shadow-tam-black/5 sm:p-10">
+              {/* Corner gradient pattern */}
+              <div className="pointer-events-none absolute -bottom-2 -right-2 opacity-60">
+                <DenseGradientPattern color="#1D90F9" rows={10} cols={10} />
+              </div>
+              <form className="relative flex flex-col gap-5">
+                <div>
+                  <label htmlFor="name" className="mb-2 block text-sm font-medium text-tam-black">
+                    Ваше имя
+                  </label>
+                  <input
+                    type="text"
+                    id="name"
+                    placeholder="Введите имя"
+                    className="w-full rounded-xl border border-tam-grey bg-white px-4 py-3 text-tam-black placeholder:text-tam-black/40 focus:border-tam-mint focus:outline-none focus:ring-2 focus:ring-tam-mint/20 transition-all"
+                  />
+                </div>
+                <div>
+                  <label htmlFor="email" className="mb-2 block text-sm font-medium text-tam-black">
+                    E-mail
+                  </label>
+                  <input
+                    type="email"
+                    id="email"
+                    placeholder="example@mail.com"
+                    className="w-full rounded-xl border border-tam-grey bg-white px-4 py-3 text-tam-black placeholder:text-tam-black/40 focus:border-tam-mint focus:outline-none focus:ring-2 focus:ring-tam-mint/20 transition-all"
+                  />
+                </div>
+                <div>
+                  <label htmlFor="phone" className="mb-2 block text-sm font-medium text-tam-black">
+                    Телефон
+                  </label>
+                  <input
+                    type="tel"
+                    id="phone"
+                    placeholder="+7 (___) ___-__-__"
+                    className="w-full rounded-xl border border-tam-grey bg-white px-4 py-3 text-tam-black placeholder:text-tam-black/40 focus:border-tam-mint focus:outline-none focus:ring-2 focus:ring-tam-mint/20 transition-all"
+                  />
+                </div>
+                <div>
+                  <label htmlFor="message" className="mb-2 block text-sm font-medium text-tam-black">
+                    Сообщение
+                  </label>
+                  <textarea
+                    id="message"
+                    rows={4}
+                    placeholder="Опишите ваш запрос..."
+                    className="w-full resize-none rounded-xl border border-tam-grey bg-white px-4 py-3 text-tam-black placeholder:text-tam-black/40 focus:border-tam-mint focus:outline-none focus:ring-2 focus:ring-tam-mint/20 transition-all"
+                  />
+                </div>
+                <button
+                  type="submit"
+                  className="mt-2 w-full rounded-xl bg-tam-blue py-4 text-base font-semibold text-white transition-all hover:bg-tam-blue/90 hover:shadow-lg hover:shadow-tam-blue/25 active:scale-[0.98]"
+                >
+                  Отправить заявку
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Train ticker */}
+      <div className="bg-tam-blue">
+        <TrainTicker variant="white" />
+      </div>
+
+      {/* Contacts */}
+      <section id="contacts" className="relative bg-tam-blue py-24 overflow-hidden">
+        {/* Scattered triangle background */}
+        <div className="pointer-events-none absolute inset-0">
+          <ScatteredPattern color="#FFFFFF" opacity={0.05} count={80} />
+        </div>
+        <div className="relative mx-auto max-w-6xl px-6">
+          <p className="mb-2 text-sm font-semibold uppercase tracking-widest text-white/60">
+            Контакты
           </p>
+          <h2 className="mb-12 text-3xl font-semibold tracking-tight text-white sm:text-4xl">
+            Свяжитесь с нами
+          </h2>
+          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="flex flex-col gap-2">
+              <p className="text-sm font-semibold uppercase tracking-widest text-white/50">Компания</p>
+              <p className="text-lg font-semibold text-white">ТОО «TRN Trans»</p>
+              <p className="text-base text-white/70">холдинг Turan Asset Management</p>
+            </div>
+            <div className="flex flex-col gap-2">
+              <p className="text-sm font-semibold uppercase tracking-widest text-white/50">E-mail</p>
+              <a href="mailto:office.trntrans@turanasset.com" className="text-lg font-medium text-white underline-offset-4 hover:underline">
+                office.trntrans@turanasset.com
+              </a>
+            </div>
+            <div className="flex flex-col gap-2">
+              <p className="text-sm font-semibold uppercase tracking-widest text-white/50">WhatsApp / мобильный</p>
+              <a href="https://wa.me/77715819627" className="text-lg font-medium text-white underline-offset-4 hover:underline">
+                +7 771 581 96 27
+              </a>
+            </div>
+          </div>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+      </section>
+    </>
   );
 }
