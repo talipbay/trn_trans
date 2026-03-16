@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 
 const NAV_LINKS = [
   { label: "О компании", href: "#about" },
@@ -12,11 +13,11 @@ export default function Navbar() {
   const [open, setOpen] = useState(false);
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-[100] bg-tam-blue">
+    <nav className="fixed top-0 left-0 right-0 z-100 bg-tam-blue">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
         {/* Logo */}
         <a href="#" className="flex items-center">
-          <img src="/logo_blue.png" alt="TRN Trans" className="h-8 brightness-0 invert" />
+          <Image src="/logo_blue.png" alt="TRN Trans" width={120} height={32} className="h-8 w-auto brightness-0 invert" priority />
         </a>
 
         {/* Desktop links */}

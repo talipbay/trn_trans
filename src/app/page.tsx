@@ -2,6 +2,7 @@
 
 import dynamic from "next/dynamic";
 import Navbar from "@/components/Navbar";
+import ScrollReveal from "@/components/ScrollReveal";
 import {
   SparseGridPattern,
   DenseGradientPattern,
@@ -64,46 +65,51 @@ export default function Home() {
           <SparseGridPattern color="#1422D2" opacity={0.04} size={5} gap={32} />
         </div>
         <div className="relative mx-auto max-w-6xl px-6">
-          <div className="mb-16 max-w-2xl">
-            <p className="mb-3 text-sm font-semibold uppercase tracking-widest text-tam-mint">
-              О компании
-            </p>
-            <h2 className="mb-6 text-4xl font-semibold tracking-tight text-tam-black sm:text-5xl">
-              TRN Trans
-            </h2>
-            <div className="mb-0 h-1 w-16 rounded-full bg-tam-blue" />
-          </div>
+          <ScrollReveal direction="left">
+            <div className="mb-16 max-w-2xl">
+              <p className="mb-3 text-sm font-semibold uppercase tracking-widest text-tam-mint">
+                О компании
+              </p>
+              <h2 className="mb-6 text-4xl font-semibold tracking-tight text-tam-black sm:text-5xl">
+                TRN Trans
+              </h2>
+              <div className="mb-0 h-1 w-16 rounded-full bg-tam-blue" />
+            </div>
+          </ScrollReveal>
 
           {/* Description + stats row */}
           <div className="mb-16 grid items-start gap-12 lg:grid-cols-5">
-            <p className="text-lg leading-relaxed text-tam-black/70 lg:col-span-3">
-              Транспортно-логистическая компания, предоставляющая услуги по перевозке грузов железнодорожным и автотранспортом
-            </p>
-            <div className="flex gap-12 lg:col-span-2 lg:justify-end">
-              <div>
-                <p className="text-4xl font-bold text-tam-blue">10+</p>
-                <p className="mt-1 text-sm text-tam-black/50">лет на рынке</p>
+            <ScrollReveal direction="left" delay={100}>
+              <p className="text-lg leading-relaxed text-tam-black/70 lg:col-span-3">
+                Транспортно-логистическая компания, предоставляющая услуги по перевозке грузов железнодорожным и автотранспортом
+              </p>
+            </ScrollReveal>
+            <ScrollReveal direction="right" delay={200} className="lg:col-span-2">
+              <div className="flex gap-12 lg:justify-end">
+                <div>
+                  <p className="text-4xl font-bold text-tam-blue">10+</p>
+                  <p className="mt-1 text-sm text-tam-black/50">лет на рынке</p>
+                </div>
+                <div>
+                  <p className="text-4xl font-bold text-tam-blue">200</p>
+                  <p className="mt-1 text-sm text-tam-black/50">вагонов</p>
+                </div>
               </div>
-              <div>
-                <p className="text-4xl font-bold text-tam-blue">200</p>
-                <p className="mt-1 text-sm text-tam-black/50">вагонов</p>
-              </div>
-            </div>
+            </ScrollReveal>
           </div>
 
           {/* Points */}
           <div className="grid gap-0 divide-y sm:grid-cols-3 sm:divide-x sm:divide-y-0 divide-tam-grey/60">
             {ABOUT_ITEMS.map((item, i) => (
-              <div
-                key={i}
-                className="group flex flex-col gap-4 px-8 py-8 first:pl-0 last:pr-0 max-sm:px-0 transition-all"
-              >
-                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-tam-blue/10 text-tam-blue transition-colors group-hover:bg-tam-blue group-hover:text-white">
-                  {item.icon}
+              <ScrollReveal key={i} direction="up" delay={i * 150}>
+                <div className="group flex flex-col gap-4 px-8 py-8 first:pl-0 last:pr-0 max-sm:px-0 transition-all">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-tam-blue/10 text-tam-blue transition-colors group-hover:bg-tam-blue group-hover:text-white">
+                    {item.icon}
+                  </div>
+                  <h3 className="text-lg font-semibold text-tam-black">{item.title}</h3>
+                  <p className="text-base leading-relaxed text-tam-black/60">{item.text}</p>
                 </div>
-                <h3 className="text-lg font-semibold text-tam-black">{item.title}</h3>
-                <p className="text-base leading-relaxed text-tam-black/60">{item.text}</p>
-              </div>
+              </ScrollReveal>
             ))}
           </div>
         </div>
@@ -124,19 +130,22 @@ export default function Home() {
         <div className="relative mx-auto max-w-6xl px-6">
           <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
             {/* Left side - text */}
-            <div>
-              <p className="mb-2 text-sm font-semibold uppercase tracking-widest text-tam-mint">
-                Обратная связь
-              </p>
-              <h2 className="mb-6 text-3xl font-semibold tracking-tight text-tam-black sm:text-4xl">
-                Оставьте заявку
-              </h2>
-              <p className="mb-8 max-w-md text-base leading-relaxed text-tam-black/70">
-                Заполните форму, и наши специалисты свяжутся с вами в ближайшее время для обсуждения деталей сотрудничества.
-              </p>
-            </div>
+            <ScrollReveal direction="left">
+              <div>
+                <p className="mb-2 text-sm font-semibold uppercase tracking-widest text-tam-mint">
+                  Обратная связь
+                </p>
+                <h2 className="mb-6 text-3xl font-semibold tracking-tight text-tam-black sm:text-4xl">
+                  Оставьте заявку
+                </h2>
+                <p className="mb-8 max-w-md text-base leading-relaxed text-tam-black/70">
+                  Заполните форму, и наши специалисты свяжутся с вами в ближайшее время для обсуждения деталей сотрудничества.
+                </p>
+              </div>
+            </ScrollReveal>
 
             {/* Right side - form */}
+            <ScrollReveal direction="right" delay={150}>
             <div className="relative overflow-hidden rounded-3xl bg-white p-8 shadow-xl shadow-tam-black/5 sm:p-10">
               {/* Corner gradient pattern */}
               <div className="pointer-events-none absolute -bottom-2 -right-2 opacity-60">
@@ -195,6 +204,7 @@ export default function Home() {
                 </button>
               </form>
             </div>
+            </ScrollReveal>
           </div>
         </div>
       </section>
@@ -211,30 +221,38 @@ export default function Home() {
           <ScatteredPattern color="#FFFFFF" opacity={0.05} count={80} />
         </div>
         <div className="relative mx-auto max-w-6xl px-6">
-          <p className="mb-2 text-sm font-semibold uppercase tracking-widest text-white/60">
-            Контакты
-          </p>
-          <h2 className="mb-12 text-3xl font-semibold tracking-tight text-white sm:text-4xl">
-            Свяжитесь с нами
-          </h2>
+          <ScrollReveal direction="up">
+            <p className="mb-2 text-sm font-semibold uppercase tracking-widest text-white/60">
+              Контакты
+            </p>
+            <h2 className="mb-12 text-3xl font-semibold tracking-tight text-white sm:text-4xl">
+              Свяжитесь с нами
+            </h2>
+          </ScrollReveal>
           <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-            <div className="flex flex-col gap-2">
-              <p className="text-sm font-semibold uppercase tracking-widest text-white/50">Компания</p>
-              <p className="text-lg font-semibold text-white">ТОО «TRN Trans»</p>
-              <p className="text-base text-white/70">холдинг Turan Asset Management</p>
-            </div>
-            <div className="flex flex-col gap-2">
-              <p className="text-sm font-semibold uppercase tracking-widest text-white/50">E-mail</p>
-              <a href="mailto:office.trntrans@turanasset.com" className="text-lg font-medium text-white underline-offset-4 hover:underline">
-                office.trntrans@turanasset.com
-              </a>
-            </div>
-            <div className="flex flex-col gap-2">
-              <p className="text-sm font-semibold uppercase tracking-widest text-white/50">WhatsApp / мобильный</p>
-              <a href="https://wa.me/77715819627" className="text-lg font-medium text-white underline-offset-4 hover:underline">
-                +7 771 581 96 27
-              </a>
-            </div>
+            <ScrollReveal direction="left" delay={0}>
+              <div className="flex flex-col gap-2">
+                <p className="text-sm font-semibold uppercase tracking-widest text-white/50">Компания</p>
+                <p className="text-lg font-semibold text-white">ТОО «TRN Trans»</p>
+                <p className="text-base text-white/70">холдинг Turan Asset Management</p>
+              </div>
+            </ScrollReveal>
+            <ScrollReveal direction="up" delay={100}>
+              <div className="flex flex-col gap-2">
+                <p className="text-sm font-semibold uppercase tracking-widest text-white/50">E-mail</p>
+                <a href="mailto:office.trntrans@turanasset.com" className="text-lg font-medium text-white underline-offset-4 hover:underline">
+                  office.trntrans@turanasset.com
+                </a>
+              </div>
+            </ScrollReveal>
+            <ScrollReveal direction="right" delay={200}>
+              <div className="flex flex-col gap-2">
+                <p className="text-sm font-semibold uppercase tracking-widest text-white/50">WhatsApp / мобильный</p>
+                <a href="https://wa.me/77715819627" className="text-lg font-medium text-white underline-offset-4 hover:underline">
+                  +7 771 581 96 27
+                </a>
+              </div>
+            </ScrollReveal>
           </div>
         </div>
       </section>
