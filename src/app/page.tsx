@@ -92,6 +92,62 @@ export default function Home() {
           <div className="absolute bottom-[18%] right-[8%] h-px w-24 bg-white/25" />
         </div>
 
+        {/* Triangle cluster accents + gradient fade triangles */}
+        <svg className="pointer-events-none absolute inset-0 w-full h-full hidden md:block" xmlns="http://www.w3.org/2000/svg">
+          {/* ── Cluster: top-left corner ── */}
+          <polygon points="60,80 78,80 60,98" fill="white" opacity="0.18" />
+          <polygon points="82,72 94,72 82,84" fill="white" opacity="0.12" />
+          <polygon points="55,105 67,105 55,117" fill="white" opacity="0.08" />
+          <polygon points="90,90 98,90 90,98" fill="white" opacity="0.14" />
+
+          {/* ── Cluster: bottom-right corner ── */}
+          <polygon points="calc(100% - 80) calc(100% - 90)" fill="white" opacity="0" />
+          <g style={{ transform: "translate(calc(100% - 120px), calc(100% - 140px))" } as React.CSSProperties}>
+            <polygon points="0,0 18,0 0,18" fill="white" opacity="0.18" />
+            <polygon points="24,10 36,10 24,22" fill="white" opacity="0.12" />
+            <polygon points="-5,25 7,25 -5,37" fill="white" opacity="0.08" />
+            <polygon points="30,30 38,30 30,38" fill="white" opacity="0.14" />
+          </g>
+
+          {/* ── Cluster: top-right ── */}
+          <g style={{ transform: "translate(calc(100% - 110px), 70px)" } as React.CSSProperties}>
+            <polygon points="0,0 14,0 0,14" fill="white" opacity="0.10" />
+            <polygon points="20,8 30,8 20,18" fill="white" opacity="0.07" />
+            <polygon points="5,20 13,20 5,28" fill="white" opacity="0.05" />
+          </g>
+
+          {/* ── Cluster: bottom-left ── */}
+          <g style={{ transform: "translate(70px, calc(100% - 120px))" } as React.CSSProperties}>
+            <polygon points="0,0 14,0 0,14" fill="white" opacity="0.10" />
+            <polygon points="18,12 28,12 18,22" fill="white" opacity="0.07" />
+            <polygon points="2,22 10,22 2,30" fill="white" opacity="0.05" />
+          </g>
+
+          {/* ── Gradient fade: left edge — triangles shrink & fade toward center ── */}
+          <polygon points="0,200 20,200 0,220" fill="white" opacity="0.15" />
+          <polygon points="30,240 46,240 30,256" fill="white" opacity="0.10" />
+          <polygon points="55,270 67,270 55,282" fill="white" opacity="0.06" />
+          <polygon points="80,290 88,290 80,298" fill="white" opacity="0.03" />
+
+          <polygon points="0,400 18,400 0,418" fill="white" opacity="0.14" />
+          <polygon points="28,430 42,430 28,444" fill="white" opacity="0.09" />
+          <polygon points="52,455 62,455 52,465" fill="white" opacity="0.05" />
+          <polygon points="75,470 81,470 75,476" fill="white" opacity="0.02" />
+
+          {/* ── Gradient fade: right edge ── */}
+          <g style={{ transform: "translate(calc(100% - 100px), 0)" } as React.CSSProperties}>
+            <polygon points="100,220 80,220 100,200" fill="white" opacity="0.15" />
+            <polygon points="70,260 54,260 70,244" fill="white" opacity="0.10" />
+            <polygon points="45,280 33,280 45,268" fill="white" opacity="0.06" />
+            <polygon points="20,295 12,295 20,287" fill="white" opacity="0.03" />
+
+            <polygon points="100,420 82,420 100,402" fill="white" opacity="0.14" />
+            <polygon points="72,450 58,450 72,436" fill="white" opacity="0.09" />
+            <polygon points="48,470 38,470 48,460" fill="white" opacity="0.05" />
+            <polygon points="25,480 19,480 25,474" fill="white" opacity="0.02" />
+          </g>
+        </svg>
+
         <div className="absolute inset-x-0 top-1/2 h-[90vh] -translate-y-1/2 sm:h-[90vh] max-sm:h-auto max-sm:aspect-square max-sm:w-full">
           <TriangleSphere />
         </div>

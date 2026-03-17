@@ -35,7 +35,7 @@ function createTriangleGeometry(size: number) {
 /* ── build instance matrices (baked once, never changes) ── */
 function buildSphereMatrices(latCount: number, lonCount: number, radius: number) {
   const matrices: THREE.Matrix4[] = [];
-  const up = new THREE.Vector3(0, 0, 1);
+  const worldUp = new THREE.Vector3(0, 1, 0);
   for (let lat = 1; lat < latCount; lat++) {
     const phi = (lat / latCount) * Math.PI;
     for (let lon = 0; lon < lonCount; lon++) {
@@ -46,7 +46,17 @@ function buildSphereMatrices(latCount: number, lonCount: number, radius: number)
         radius * Math.sin(phi) * Math.sin(theta),
       );
       const normal = pos.clone().normalize();
-      const quat = new THREE.Quaternion().setFromUnitVectors(up, normal);
+      // Build consistent tangent frame so all triangles face the same way
+      let tangent = new THREE.Vector3().crossVectors(worldUp, normal);
+      if (tangent.lengthSq() < 0.001) {
+        // At poles, worldUp is parallel to normal — use a fallback
+        tangent.crossVectors(new THREE.Vector3(1, 0, 0), normal);
+      }
+      tangent.normalize();
+      const bitangent = new THREE.Vector3().crossVectors(normal, tangent).normalize();
+      // Rotation matrix: tangent=X, bitangent=Y, normal=Z
+      const rotMat = new THREE.Matrix4().makeBasis(tangent, bitangent, normal);
+      const quat = new THREE.Quaternion().setFromRotationMatrix(rotMat);
       const mat = new THREE.Matrix4();
       mat.compose(pos, quat, new THREE.Vector3(1, 1, 1));
       matrices.push(mat);
@@ -153,7 +163,7 @@ function TriangleSphereInner({ device }: { device: "mobile" | "tablet" | "deskto
   const { geo, matrices, material } = useMemo(() => {
     const g = createTriangleGeometry(cfg.triSize);
     const m = buildSphereMatrices(cfg.lat, cfg.lon, radius);
-    const mat = new THREE.MeshBasicMaterial({ color: "#FFFFFF", side: THREE.FrontSide });
+    const mat = new THREE.MeshBasicMaterial({ color: "#FFFFFF", side: THREE.FrontSide, transparent: true, opacity: 0.5 });
     return { geo: g, matrices: m, material: mat };
   }, [cfg.triSize, cfg.lat, cfg.lon]);
 
@@ -197,15 +207,43 @@ function TriangleSphereInner({ device }: { device: "mobile" | "tablet" | "deskto
     };
   }, [gl, onPointerDown, onPointerMove, onPointerUp]);
 
+  const idleBaseX = useRef(0);
+  const idleBaseY = useRef(0);
+  const settled = useRef(true);
+
   useFrame(({ clock }) => {
     if (!groupRef.current) return;
     const t = clock.getElapsedTime();
-    const idleY = Math.cos(t * 0.05) * 0.0005 + Math.cos(t * 0.02) * 0.0003;
-    groupRef.current.rotation.x += dragVelocity.current.x;
-    groupRef.current.rotation.y += dragVelocity.current.y + idleY;
+
+    // Chaotic idle oscillation on X, gentle on Y
+    const idleX = Math.sin(t * 0.1) * 0.15 + Math.sin(t * 0.17) * 0.08;
+    const idleY = Math.sin(t * 0.13) * 0.1;
+
+    // Apply drag velocity
+    if (dragging.current || Math.abs(dragVelocity.current.x) > 0.0005 || Math.abs(dragVelocity.current.y) > 0.0005) {
+      groupRef.current.rotation.x += dragVelocity.current.x;
+      groupRef.current.rotation.y += dragVelocity.current.y;
+      settled.current = false;
+    }
+
     if (!dragging.current) {
       dragVelocity.current.x *= 0.92;
       dragVelocity.current.y *= 0.92;
+
+      // Once velocity is negligible, capture base minus current idle offset so there's no jump
+      if (!settled.current && Math.abs(dragVelocity.current.x) <= 0.0005 && Math.abs(dragVelocity.current.y) <= 0.0005) {
+        idleBaseX.current = groupRef.current.rotation.x - idleX;
+        idleBaseY.current = groupRef.current.rotation.y - idleY;
+        dragVelocity.current.x = 0;
+        dragVelocity.current.y = 0;
+        settled.current = true;
+      }
+    }
+
+    // Apply idle oscillation when settled
+    if (settled.current && !dragging.current) {
+      groupRef.current.rotation.x = idleBaseX.current + idleX;
+      groupRef.current.rotation.y = idleBaseY.current + idleY;
     }
   });
 
