@@ -53,9 +53,49 @@ export default function Home() {
 
       {/* Hero */}
       <section className="relative flex min-h-screen items-center justify-center overflow-hidden bg-tam-blue">
+        {/* Radial gradient glow behind sphere */}
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+          <div className="w-[70vmin] h-[70vmin] rounded-full bg-white/[0.06] blur-[80px]" />
+        </div>
+
+        {/* Vertical text — left side */}
+        <div className="pointer-events-none absolute left-6 top-1/2 -translate-y-1/2 hidden lg:block">
+          <p className="text-[11px] font-bold uppercase tracking-[0.35em] text-white/40"
+             style={{ writingMode: "vertical-lr" }}>
+            TRN Trans — Logistics
+          </p>
+        </div>
+
+        {/* Vertical text — right side */}
+        <div className="pointer-events-none absolute right-6 top-1/2 -translate-y-1/2 hidden lg:block">
+          <p className="text-[11px] font-bold uppercase tracking-[0.35em] text-white/40"
+             style={{ writingMode: "vertical-rl" }}>
+            Надежный партнер вашего бизнеса
+          </p>
+        </div>
+
+        {/* Geometric accent lines */}
+        <div className="pointer-events-none absolute inset-0 hidden md:block">
+          {/* Top-left corner */}
+          <div className="absolute top-20 left-10">
+            <div className="h-px w-16 bg-white/35" />
+            <div className="mt-0 h-16 w-px bg-white/35" />
+          </div>
+          {/* Bottom-right corner */}
+          <div className="absolute bottom-12 right-10 flex flex-col items-end">
+            <div className="mb-0 h-16 w-px bg-white/35" />
+            <div className="h-px w-16 bg-white/35" />
+          </div>
+          {/* Thin horizontal accent — top */}
+          <div className="absolute top-[18%] left-[8%] h-px w-24 bg-white/25" />
+          {/* Thin horizontal accent — bottom */}
+          <div className="absolute bottom-[18%] right-[8%] h-px w-24 bg-white/25" />
+        </div>
+
         <div className="absolute inset-x-0 top-1/2 h-[90vh] -translate-y-1/2 sm:h-[90vh] max-sm:h-auto max-sm:aspect-square max-sm:w-full">
           <TriangleSphere />
         </div>
+
       </section>
 
       {/* About */}

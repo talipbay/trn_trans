@@ -75,6 +75,70 @@ const DEVICE_CONFIG = {
   desktop: { lat: 30, lon: 45, triSize: 0.06, dpr: 2,   labelSize: "13px", labelMin: "160px" },
 };
 
+/* ── floating dust particles ── */
+function FloatingParticles({ count, radius }: { count: number; radius: number }) {
+  const ref = useRef<THREE.Points>(null);
+  const { positions, speeds } = useMemo(() => {
+    const pos = new Float32Array(count * 3);
+    const spd = new Float32Array(count * 3);
+    for (let i = 0; i < count; i++) {
+      const r = radius * (0.6 + Math.random() * 1.4);
+      const theta = Math.random() * Math.PI * 2;
+      const phi = Math.acos(2 * Math.random() - 1);
+      pos[i * 3] = r * Math.sin(phi) * Math.cos(theta);
+      pos[i * 3 + 1] = r * Math.cos(phi);
+      pos[i * 3 + 2] = r * Math.sin(phi) * Math.sin(theta);
+      spd[i * 3] = (Math.random() - 0.5) * 0.002;
+      spd[i * 3 + 1] = (Math.random() - 0.5) * 0.002;
+      spd[i * 3 + 2] = (Math.random() - 0.5) * 0.002;
+    }
+    return { positions: pos, speeds: spd };
+  }, [count, radius]);
+
+  useFrame(() => {
+    if (!ref.current) return;
+    const posArr = ref.current.geometry.attributes.position.array as Float32Array;
+    for (let i = 0; i < count; i++) {
+      posArr[i * 3] += speeds[i * 3];
+      posArr[i * 3 + 1] += speeds[i * 3 + 1];
+      posArr[i * 3 + 2] += speeds[i * 3 + 2];
+      // wrap back if too far
+      const dist = Math.sqrt(posArr[i * 3] ** 2 + posArr[i * 3 + 1] ** 2 + posArr[i * 3 + 2] ** 2);
+      if (dist > radius * 2.2) {
+        const r = radius * 0.8;
+        const t = Math.random() * Math.PI * 2;
+        const p = Math.acos(2 * Math.random() - 1);
+        posArr[i * 3] = r * Math.sin(p) * Math.cos(t);
+        posArr[i * 3 + 1] = r * Math.cos(p);
+        posArr[i * 3 + 2] = r * Math.sin(p) * Math.sin(t);
+      }
+    }
+    ref.current.geometry.attributes.position.needsUpdate = true;
+  });
+
+  return (
+    <points ref={ref}>
+      <bufferGeometry>
+        <bufferAttribute attach="attributes-position" args={[positions, 3]} count={count} itemSize={3} />
+      </bufferGeometry>
+      <pointsMaterial color="#FFFFFF" size={0.02} transparent opacity={0.4} sizeAttenuation depthWrite={false} />
+    </points>
+  );
+}
+
+/* ── connecting line from sphere surface to label dot ── */
+function ConnectingLine({ from, to }: { from: THREE.Vector3; to: THREE.Vector3 }) {
+  const ref = useRef<THREE.Line>(null);
+  const geometry = useMemo(() => {
+    return new THREE.BufferGeometry().setFromPoints([from, to]);
+  }, [from, to]);
+  const material = useMemo(() => {
+    return new THREE.LineBasicMaterial({ color: "#FFFFFF", transparent: true, opacity: 0.25 });
+  }, []);
+
+  return <primitive ref={ref} object={new THREE.Line(geometry, material)} />;
+}
+
 function TriangleSphereInner({ device }: { device: "mobile" | "tablet" | "desktop" }) {
   const groupRef = useRef<THREE.Group>(null);
   const meshRef = useRef<THREE.InstancedMesh>(null);
@@ -145,32 +209,61 @@ function TriangleSphereInner({ device }: { device: "mobile" | "tablet" | "deskto
     }
   });
 
+  const particleCount = device === "mobile" ? 40 : device === "tablet" ? 60 : 100;
+
   return (
     <group ref={groupRef}>
       <instancedMesh ref={meshRef} args={[geo, material, matrices.length]} />
 
+      {/* Floating dust particles */}
+      <FloatingParticles count={particleCount} radius={radius} />
+
       {LABELS.map((label, i) => {
-        const pos = labelPosition(label.phi, label.theta, radius + 0.35);
+        const dotPos = labelPosition(label.phi, label.theta, radius + 0.15);
+        const htmlPos = labelPosition(label.phi, label.theta, radius + 0.15);
+        const surfacePos = labelPosition(label.phi, label.theta, radius);
         return (
-          <group key={`label-${i}`} position={pos}>
-            <Html
-              center
-              distanceFactor={7}
-              style={{ pointerEvents: "none", whiteSpace: "pre-line", userSelect: "none" }}
-            >
-              <div style={{
-                padding: "4px 0",
-                fontSize: cfg.labelSize,
-                lineHeight: "1.4",
-                color: "#FFFFFF",
-                fontFamily: "Cygre, sans-serif",
-                fontWeight: 600,
-                minWidth: cfg.labelMin,
-                textAlign: "center",
-              }}>
-                {label.text}
-              </div>
-            </Html>
+          <group key={`label-${i}`}>
+            {/* Connecting line from sphere surface to dot */}
+            <ConnectingLine from={surfacePos} to={dotPos} />
+            <mesh position={dotPos}>
+              <sphereGeometry args={[0.06, 16, 16]} />
+              <meshBasicMaterial color="#FFFFFF" />
+            </mesh>
+            {/* Outer sphere ring */}
+            <mesh position={dotPos}>
+              <sphereGeometry args={[0.1, 16, 16]} />
+              <meshBasicMaterial color="#FFFFFF" transparent opacity={0.3} />
+            </mesh>
+            {/* Label text — Html placed at dot position, text shifted up via CSS */}
+            <group position={htmlPos}>
+              <Html
+                center
+                distanceFactor={7}
+                style={{ pointerEvents: "none", userSelect: "none" }}
+              >
+                <div style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  transform: "translateY(-100%)",
+                  paddingBottom: "2px",
+                }}>
+                  <div style={{
+                    fontSize: cfg.labelSize,
+                    lineHeight: "1.4",
+                    color: "#FFFFFF",
+                    fontFamily: "Cygre, sans-serif",
+                    fontWeight: 600,
+                    minWidth: cfg.labelMin,
+                    textAlign: "center",
+                    whiteSpace: "pre-line",
+                  }}>
+                    {label.text}
+                  </div>
+                </div>
+              </Html>
+            </group>
           </group>
         );
       })}

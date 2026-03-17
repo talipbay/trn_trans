@@ -163,4 +163,14 @@
   animation: train-scroll 25s linear infinite;
 }
 
+/* Scroll indicator gentle bounce */
+@keyframes bounce-slow {
+  0%, 100% { transform: translateY(0); opacity: 0.6; }
+  50% { transform: translateY(6px); opacity: 1; }
+}
+
+.animate-bounce-slow {
+  animation: bounce-slow 2.5s ease-in-out infinite;
+}
+
 /* Scroll reveal — handled via JS transitions, no CSS classes needed */
