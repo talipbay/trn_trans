@@ -4,6 +4,7 @@ import { useRef, useMemo, useEffect, useState, useCallback } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { Html } from "@react-three/drei";
 import * as THREE from "three";
+import { useI18n } from "@/lib/i18n";
 
 /* ── detect device type ── */
 function useDeviceType() {
@@ -65,10 +66,15 @@ function buildSphereMatrices(latCount: number, lonCount: number, radius: number)
   return matrices;
 }
 
-const LABELS = [
-  { text: "200 крытых вагонов\nв оперировании", phi: Math.PI * 0.35, theta: Math.PI * 0.25 },
-  { text: "Организация\nконтейнерных поездов", phi: Math.PI * 0.5, theta: Math.PI * 1.15 },
-  { text: "Проектная логистика\nдля нефтегазовой\nи энергетической отрасли", phi: Math.PI * 0.7, theta: Math.PI * 0.6 },
+const LABEL_KEYS = [
+  { key: "sphere.container", phi: Math.PI * 0.25, theta: Math.PI * 0.15 },
+  { key: "sphere.covered", phi: Math.PI * 0.35, theta: Math.PI * 0.85 },
+  { key: "sphere.gondola", phi: Math.PI * 0.45, theta: Math.PI * 1.55 },
+  { key: "sphere.auto", phi: Math.PI * 0.55, theta: Math.PI * 0.45 },
+  { key: "sphere.general", phi: Math.PI * 0.65, theta: Math.PI * 1.2 },
+  { key: "sphere.oversized", phi: Math.PI * 0.75, theta: Math.PI * 0.0 },
+  { key: "sphere.consulting", phi: Math.PI * 0.4, theta: Math.PI * 1.85 },
+  { key: "sphere.project", phi: Math.PI * 0.6, theta: Math.PI * 0.7 },
 ];
 
 function labelPosition(phi: number, theta: number, radius: number) {
@@ -80,7 +86,7 @@ function labelPosition(phi: number, theta: number, radius: number) {
 }
 
 const DEVICE_CONFIG = {
-  mobile:  { lat: 16, lon: 24, triSize: 0.05, dpr: 1,   labelSize: "11px", labelMin: "120px" },
+  mobile:  { lat: 28, lon: 40, triSize: 0.05, dpr: 1,   labelSize: "11px", labelMin: "120px" },
   tablet:  { lat: 22, lon: 32, triSize: 0.055, dpr: 1.5, labelSize: "12px", labelMin: "140px" },
   desktop: { lat: 30, lon: 45, triSize: 0.06, dpr: 2,   labelSize: "13px", labelMin: "160px" },
 };
@@ -149,7 +155,7 @@ function ConnectingLine({ from, to }: { from: THREE.Vector3; to: THREE.Vector3 }
   return <primitive ref={ref} object={new THREE.Line(geometry, material)} />;
 }
 
-function TriangleSphereInner({ device }: { device: "mobile" | "tablet" | "desktop" }) {
+function TriangleSphereInner({ device, labels }: { device: "mobile" | "tablet" | "desktop"; labels: { text: string; phi: number; theta: number }[] }) {
   const groupRef = useRef<THREE.Group>(null);
   const meshRef = useRef<THREE.InstancedMesh>(null);
   const dragging = useRef(false);
@@ -158,7 +164,7 @@ function TriangleSphereInner({ device }: { device: "mobile" | "tablet" | "deskto
   const { gl, size } = useThree();
 
   const cfg = DEVICE_CONFIG[device];
-  const radius = 2.8;
+  const radius = 2.6;
 
   const { geo, matrices, material } = useMemo(() => {
     const g = createTriangleGeometry(cfg.triSize);
@@ -256,7 +262,7 @@ function TriangleSphereInner({ device }: { device: "mobile" | "tablet" | "deskto
       {/* Floating dust particles */}
       <FloatingParticles count={particleCount} radius={radius} />
 
-      {LABELS.map((label, i) => {
+      {labels.map((label, i) => {
         const dotPos = labelPosition(label.phi, label.theta, radius + 0.15);
         const htmlPos = labelPosition(label.phi, label.theta, radius + 0.15);
         const surfacePos = labelPosition(label.phi, label.theta, radius);
@@ -315,15 +321,27 @@ export default function TriangleSphere() {
   useEffect(() => setMounted(true), []);
   if (!mounted) return null;
 
+  return <TriangleSphereCanvas device={device} />;
+}
+
+function TriangleSphereCanvas({ device }: { device: "mobile" | "tablet" | "desktop" }) {
+  const { t } = useI18n();
+
+  const labels = useMemo(() =>
+    LABEL_KEYS.map((l) => ({ text: t(l.key as Parameters<typeof t>[0]), phi: l.phi, theta: l.theta })),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [t]
+  );
+
   return (
     <Canvas
-      camera={{ position: [0, 0, 7], fov: 50 }}
+      camera={{ position: [0, -0.5, 7], fov: 50 }}
       style={{ width: "100%", height: "100%", cursor: "grab", touchAction: "pan-y" }}
       gl={{ alpha: true, antialias: device === "desktop", powerPreference: "high-performance" }}
       dpr={DEVICE_CONFIG[device].dpr}
       frameloop="always"
     >
-      <TriangleSphereInner device={device} />
+      <TriangleSphereInner device={device} labels={labels} />
     </Canvas>
   );
 }

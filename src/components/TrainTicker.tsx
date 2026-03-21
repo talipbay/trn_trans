@@ -186,7 +186,7 @@ export default function TrainTicker({ variant = "blue" }: { variant?: "blue" | "
         {[0, 1].map((copy) => (
           <div key={copy} className="flex shrink-0 items-end gap-0 animate-train-scroll">
             {TRAIN_CARS.map((Car, i) => (
-              <div key={`${copy}-${i}`} className="shrink-0 -mx-[3px]">
+              <div key={`${copy}-${i}`} className={`shrink-0 -mx-[3px] ${i === 0 ? "-scale-x-100" : ""}`}>
                 <Car />
               </div>
             ))}

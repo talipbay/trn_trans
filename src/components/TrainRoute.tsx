@@ -1,16 +1,19 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useI18n } from "@/lib/i18n";
 
-const STATIONS = [
-  "Алматы",
-  "Астана",
-  "Актау",
-  "Москва",
-  "Минск",
-];
+const STATION_KEYS = [
+  "station.almaty",
+  "station.astana",
+  "station.aktau",
+  "station.tashkent",
+  "station.moscow",
+  "station.china",
+] as const;
 
 export default function TrainRoute() {
+  const { t } = useI18n();
   const ref = useRef<HTMLDivElement>(null);
   const [progress, setProgress] = useState(0);
   const maxProgress = useRef(0);
@@ -81,12 +84,12 @@ export default function TrainRoute() {
           </div>
 
           {/* Station markers */}
-          {STATIONS.map((name, i) => {
-            const x = (i / (STATIONS.length - 1)) * 100;
+          {STATION_KEYS.map((key, i) => {
+            const x = (i / (STATION_KEYS.length - 1)) * 100;
             const active = progress * 100 >= x;
             return (
               <div
-                key={name}
+                key={key}
                 className="absolute top-1/2 -translate-x-1/2 flex flex-col items-center"
                 style={{ left: `${x}%` }}
               >
@@ -108,7 +111,7 @@ export default function TrainRoute() {
                     transition: "color 0.4s ease"
                   }}
                 >
-                  {name}
+                  {t(key)}
                 </span>
               </div>
             );

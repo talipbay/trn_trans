@@ -1,8 +1,10 @@
 "use client";
 
+import { useState, useEffect, useCallback } from "react";
 import dynamic from "next/dynamic";
 import Navbar from "@/components/Navbar";
 import ScrollReveal from "@/components/ScrollReveal";
+import Footer from "@/components/Footer";
 import {
   SparseGridPattern,
   DenseGradientPattern,
@@ -11,42 +13,78 @@ import {
 } from "@/components/TrianglePatterns";
 import TrainRoute from "@/components/TrainRoute";
 import TrainTicker from "@/components/TrainTicker";
+import { useI18n } from "@/lib/i18n";
 
 const TriangleSphere = dynamic(() => import("@/components/TriangleSphere"), {
   ssr: false,
 });
 
-const ABOUT_ITEMS = [
-  {
-    icon: (
-      <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" />
-      </svg>
-    ),
-    title: "Опыт и экспертиза",
-    text: "Команда профессионалов, зарекомендовавшая себя на рынке Евразии с опытом работы более 10 лет",
-  },
-  {
-    icon: (
-      <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 18.75a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 01-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 00-3.213-9.193 2.056 2.056 0 00-1.58-.86H14.25M16.5 18.75h-2.25m0-11.177v-.958c0-.568-.422-1.048-.987-1.106a48.554 48.554 0 00-10.026 0 1.106 1.106 0 00-.987 1.106v7.635m12-6.677v6.677m0 4.5v-4.5m0 0h-12" />
-      </svg>
-    ),
-    title: "Перевозки «под ключ»",
-    text: "Организация перевозок «под ключ» для вашего бизнеса",
-  },
-  {
-    icon: (
-      <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.455 2.456L21.75 6l-1.036.259a3.375 3.375 0 00-2.455 2.456zM16.894 20.567L16.5 21.75l-.394-1.183a2.25 2.25 0 00-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 001.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 001.423 1.423l1.183.394-1.183.394a2.25 2.25 0 00-1.423 1.423z" />
-      </svg>
-    ),
-    title: "Консультации",
-    text: "Возможность оказания консультаций по технологическим ж/д процессам",
-  },
+const ABOUT_ICONS = [
+  <svg key="i1" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" />
+  </svg>,
+  <svg key="i2" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 18.75a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 01-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 00-3.213-9.193 2.056 2.056 0 00-1.58-.86H14.25M16.5 18.75h-2.25m0-11.177v-.958c0-.568-.422-1.048-.987-1.106a48.554 48.554 0 00-10.026 0 1.106 1.106 0 00-.987 1.106v7.635m12-6.677v6.677m0 4.5v-4.5m0 0h-12" />
+  </svg>,
+  <svg key="i3" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.455 2.456L21.75 6l-1.036.259a3.375 3.375 0 00-2.455 2.456zM16.894 20.567L16.5 21.75l-.394-1.183a2.25 2.25 0 00-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 001.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 001.423 1.423l1.183.394-1.183.394a2.25 2.25 0 00-1.423 1.423z" />
+  </svg>,
 ];
 
 export default function Home() {
+  const { t } = useI18n();
+  const [heroLocked, setHeroLocked] = useState(true);
+
+  // Lock body scroll while hero is active
+  useEffect(() => {
+    if (heroLocked) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => { document.body.style.overflow = ""; };
+  }, [heroLocked]);
+
+  // Unlock if page loads with a hash (e.g. /#about from navbar)
+  useEffect(() => {
+    if (window.location.hash) {
+      setHeroLocked(false);
+    }
+  }, []);
+
+  // Listen for hash changes (navbar clicks while on home page)
+  useEffect(() => {
+    const onHashChange = () => {
+      if (window.location.hash) setHeroLocked(false);
+    };
+    window.addEventListener("hashchange", onHashChange);
+    return () => window.removeEventListener("hashchange", onHashChange);
+  }, []);
+
+  // Re-lock when user scrolls back to top
+  useEffect(() => {
+    if (heroLocked) return;
+    const onScroll = () => {
+      if (window.scrollY === 0) {
+        // Clear hash so hero can lock cleanly
+        if (window.location.hash) {
+          history.replaceState(null, "", window.location.pathname);
+        }
+        setHeroLocked(true);
+      }
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, [heroLocked]);
+
+  const handleScrollDown = useCallback(() => {
+    setHeroLocked(false);
+    // Small delay so overflow is unlocked before scrolling
+    requestAnimationFrame(() => {
+      document.getElementById("about")?.scrollIntoView({ behavior: "smooth" });
+    });
+  }, []);
+
   return (
     <>
       <Navbar />
@@ -62,7 +100,7 @@ export default function Home() {
         <div className="pointer-events-none absolute left-6 top-1/2 -translate-y-1/2 hidden lg:block">
           <p className="text-[11px] font-bold uppercase tracking-[0.35em] text-white/40"
              style={{ writingMode: "vertical-lr" }}>
-            TRN Trans — Logistics
+            {t("hero.vertical_left")}
           </p>
         </div>
 
@@ -70,7 +108,7 @@ export default function Home() {
         <div className="pointer-events-none absolute right-6 top-1/2 -translate-y-1/2 hidden lg:block">
           <p className="text-[11px] font-bold uppercase tracking-[0.35em] text-white/40"
              style={{ writingMode: "vertical-rl" }}>
-            Надежный партнер вашего бизнеса
+            {t("hero.vertical_right")}
           </p>
         </div>
 
@@ -152,6 +190,43 @@ export default function Home() {
           <TriangleSphere />
         </div>
 
+        {/* Scroll down button */}
+        <button
+          onClick={handleScrollDown}
+          className="absolute bottom-6 left-1/2 z-10 -translate-x-1/2 flex flex-col items-center gap-2 group"
+          aria-label="Scroll down"
+        >
+          <span className="text-[10px] font-semibold uppercase tracking-[0.3em] text-white/50 transition-all group-hover:text-white/80 group-hover:tracking-[0.4em]">{t("hero.next")}</span>
+          <div className="flex flex-col items-center gap-1">
+            <div className="h-8 w-px bg-gradient-to-b from-transparent to-white/40" />
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" className="animate-bounce-slow">
+              <path d="M2 4l4 4 4-4" stroke="white" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" opacity="0.6" />
+            </svg>
+          </div>
+        </button>
+
+        {/* Contact icons — bottom right */}
+        <div className="absolute bottom-6 right-6 z-10 flex flex-col items-center gap-3">
+          {/* Phone */}
+          <a href="tel:+77717003053" className="flex h-14 w-14 items-center justify-center rounded-full bg-white/10 backdrop-blur-sm transition-all hover:bg-white/20" aria-label="Call">
+            <svg className="h-6 w-6 text-white/80" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z" />
+            </svg>
+          </a>
+          {/* Telegram */}
+          <a href="https://t.me/+77717003053" target="_blank" rel="noopener noreferrer" className="flex h-14 w-14 items-center justify-center rounded-full bg-white/10 backdrop-blur-sm transition-all hover:bg-white/20" aria-label="Telegram">
+            <svg className="h-6 w-6 text-white/80" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.479.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
+            </svg>
+          </a>
+          {/* WhatsApp */}
+          <a href="https://wa.me/77717003053" target="_blank" rel="noopener noreferrer" className="flex h-14 w-14 items-center justify-center rounded-full bg-white/10 backdrop-blur-sm transition-all hover:bg-white/20" aria-label="WhatsApp">
+            <svg className="h-6 w-6 text-white/80" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"/>
+            </svg>
+          </a>
+        </div>
+
       </section>
 
       {/* About */}
@@ -164,46 +239,38 @@ export default function Home() {
           <ScrollReveal direction="left">
             <div className="mb-16 max-w-2xl">
               <p className="mb-3 text-sm font-semibold uppercase tracking-widest text-tam-mint">
-                О компании
+                {t("about.label")}
               </p>
               <h2 className="mb-6 text-4xl font-semibold tracking-tight text-tam-black sm:text-5xl">
-                TRN Trans
+                {t("about.title")}
               </h2>
               <div className="mb-0 h-1 w-16 rounded-full bg-tam-blue" />
             </div>
           </ScrollReveal>
 
-          {/* Description + stats row */}
-          <div className="mb-16 grid items-start gap-12 lg:grid-cols-5">
-            <ScrollReveal direction="left" delay={100} className="lg:col-span-3">
-              <p className="text-lg leading-relaxed text-tam-black/70">
-                Транспортно-логистическая компания, предоставляющая услуги по перевозке грузов железнодорожным и автотранспортом
+          {/* Description */}
+          <div className="mb-16">
+            <ScrollReveal direction="left" delay={100}>
+              <p className="text-lg leading-relaxed text-tam-black/70 max-w-3xl">
+                {t("about.description")}
               </p>
-            </ScrollReveal>
-            <ScrollReveal direction="right" delay={200} className="lg:col-span-2">
-              <div className="flex gap-12 lg:justify-end">
-                <div>
-                  <p className="text-4xl font-bold text-tam-blue">10+</p>
-                  <p className="mt-1 text-sm text-tam-black/50">лет на рынке</p>
-                </div>
-                <div>
-                  <p className="text-4xl font-bold text-tam-blue">200</p>
-                  <p className="mt-1 text-sm text-tam-black/50">вагонов</p>
-                </div>
-              </div>
             </ScrollReveal>
           </div>
 
           {/* Points */}
           <div className="grid gap-8 sm:grid-cols-3">
-            {ABOUT_ITEMS.map((item, i) => (
+            {([
+              { icon: ABOUT_ICONS[0], titleKey: "about.item1.title" as const, textKey: "about.item1.text" as const },
+              { icon: ABOUT_ICONS[1], titleKey: "about.item2.title" as const, textKey: "about.item2.text" as const },
+              { icon: ABOUT_ICONS[2], titleKey: "about.item3.title" as const, textKey: "about.item3.text" as const },
+            ]).map((item, i) => (
               <ScrollReveal key={i} direction="up" delay={i * 150}>
                 <div className="group flex flex-col gap-4 px-8 py-8 first:pl-0 last:pr-0 max-sm:px-0 transition-all">
                   <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-tam-blue/10 text-tam-blue transition-colors group-hover:bg-tam-blue group-hover:text-white">
                     {item.icon}
                   </div>
-                  <h3 className="text-lg font-semibold text-tam-black">{item.title}</h3>
-                  <p className="text-base leading-relaxed text-tam-black/60">{item.text}</p>
+                  <h3 className="text-lg font-semibold text-tam-black">{t(item.titleKey)}</h3>
+                  <p className="text-base leading-relaxed text-tam-black/60">{t(item.textKey)}</p>
                 </div>
               </ScrollReveal>
             ))}
@@ -229,13 +296,13 @@ export default function Home() {
             <ScrollReveal direction="left">
               <div>
                 <p className="mb-2 text-sm font-semibold uppercase tracking-widest text-tam-mint">
-                  Обратная связь
+                  {t("form.label")}
                 </p>
                 <h2 className="mb-6 text-3xl font-semibold tracking-tight text-tam-black sm:text-4xl">
-                  Оставьте заявку
+                  {t("form.title")}
                 </h2>
                 <p className="mb-8 max-w-md text-base leading-relaxed text-tam-black/70">
-                  Заполните форму, и наши специалисты свяжутся с вами в ближайшее время для обсуждения деталей сотрудничества.
+                  {t("form.description")}
                 </p>
               </div>
             </ScrollReveal>
@@ -250,18 +317,18 @@ export default function Home() {
               <form className="relative flex flex-col gap-5">
                 <div>
                   <label htmlFor="name" className="mb-2 block text-sm font-medium text-tam-black">
-                    Ваше имя
+                    {t("form.name")}
                   </label>
                   <input
                     type="text"
                     id="name"
-                    placeholder="Введите имя"
+                    placeholder={t("form.name_placeholder")}
                     className="w-full rounded-xl border border-tam-grey bg-white px-4 py-3 text-tam-black placeholder:text-tam-black/40 focus:border-tam-mint focus:outline-none focus:ring-2 focus:ring-tam-mint/20 transition-all"
                   />
                 </div>
                 <div>
                   <label htmlFor="email" className="mb-2 block text-sm font-medium text-tam-black">
-                    E-mail
+                    {t("form.email")}
                   </label>
                   <input
                     type="email"
@@ -272,7 +339,7 @@ export default function Home() {
                 </div>
                 <div>
                   <label htmlFor="phone" className="mb-2 block text-sm font-medium text-tam-black">
-                    Телефон
+                    {t("form.phone")}
                   </label>
                   <input
                     type="tel"
@@ -283,12 +350,12 @@ export default function Home() {
                 </div>
                 <div>
                   <label htmlFor="message" className="mb-2 block text-sm font-medium text-tam-black">
-                    Сообщение
+                    {t("form.message")}
                   </label>
                   <textarea
                     id="message"
                     rows={4}
-                    placeholder="Опишите ваш запрос..."
+                    placeholder={t("form.message_placeholder")}
                     className="w-full resize-none rounded-xl border border-tam-grey bg-white px-4 py-3 text-tam-black placeholder:text-tam-black/40 focus:border-tam-mint focus:outline-none focus:ring-2 focus:ring-tam-mint/20 transition-all"
                   />
                 </div>
@@ -296,7 +363,7 @@ export default function Home() {
                   type="submit"
                   className="mt-2 w-full rounded-xl bg-tam-blue py-4 text-base font-semibold text-white transition-all hover:bg-tam-blue/90 hover:shadow-lg hover:shadow-tam-blue/25 active:scale-[0.98]"
                 >
-                  Отправить заявку
+                  {t("form.submit")}
                 </button>
               </form>
             </div>
@@ -310,48 +377,7 @@ export default function Home() {
         <TrainTicker variant="white" />
       </div>
 
-      {/* Contacts */}
-      <section id="contacts" className="relative bg-tam-blue py-24 overflow-hidden">
-        {/* Scattered triangle background */}
-        <div className="pointer-events-none absolute inset-0">
-          <ScatteredPattern color="#FFFFFF" opacity={0.05} count={80} />
-        </div>
-        <div className="relative mx-auto max-w-6xl px-6">
-          <ScrollReveal direction="up">
-            <p className="mb-2 text-sm font-semibold uppercase tracking-widest text-white/60">
-              Контакты
-            </p>
-            <h2 className="mb-12 text-3xl font-semibold tracking-tight text-white sm:text-4xl">
-              Свяжитесь с нами
-            </h2>
-          </ScrollReveal>
-          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-            <ScrollReveal direction="left" delay={0}>
-              <div className="flex flex-col gap-2">
-                <p className="text-sm font-semibold uppercase tracking-widest text-white/50">Компания</p>
-                <p className="text-lg font-semibold text-white">ТОО «TRN Trans»</p>
-                <p className="text-base text-white/70">холдинг Turan Asset Management</p>
-              </div>
-            </ScrollReveal>
-            <ScrollReveal direction="up" delay={100}>
-              <div className="flex flex-col gap-2">
-                <p className="text-sm font-semibold uppercase tracking-widest text-white/50">E-mail</p>
-                <a href="mailto:office.trntrans@turanasset.com" className="text-lg font-medium text-white underline-offset-4 hover:underline">
-                  office.trntrans@turanasset.com
-                </a>
-              </div>
-            </ScrollReveal>
-            <ScrollReveal direction="right" delay={200}>
-              <div className="flex flex-col gap-2">
-                <p className="text-sm font-semibold uppercase tracking-widest text-white/50">WhatsApp / мобильный</p>
-                <a href="https://wa.me/77715819627" className="text-lg font-medium text-white underline-offset-4 hover:underline">
-                  +7 771 581 96 27
-                </a>
-              </div>
-            </ScrollReveal>
-          </div>
-        </div>
-      </section>
+      <Footer />
     </>
   );
 }

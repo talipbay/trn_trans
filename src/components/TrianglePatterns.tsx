@@ -94,14 +94,14 @@ export function ScatteredPattern({
   /* deterministic pseudo-random using simple seed */
   const seed = (i: number) => {
     const x = Math.sin(i * 127.1 + 311.7) * 43758.5453;
-    return x - Math.floor(x);
+    return Math.round((x - Math.floor(x)) * 10000) / 10000;
   };
 
   const triangles = Array.from({ length: count }, (_, i) => {
-    const x = seed(i * 2) * width;
-    const y = seed(i * 2 + 1) * height;
-    const size = 3 + seed(i * 3) * 6;
-    const o = opacity * (0.4 + seed(i * 4) * 0.6);
+    const x = Math.round(seed(i * 2) * width * 100) / 100;
+    const y = Math.round(seed(i * 2 + 1) * height * 100) / 100;
+    const size = Math.round((3 + seed(i * 3) * 6) * 100) / 100;
+    const o = Math.round(opacity * (0.4 + seed(i * 4) * 0.6) * 10000) / 10000;
     return (
       <polygon
         key={i}
@@ -136,7 +136,7 @@ export function MosaicDivider({
 
   const seed = (i: number) => {
     const x = Math.sin(i * 91.3 + 7.1) * 43758.5453;
-    return x - Math.floor(x);
+    return Math.round((x - Math.floor(x)) * 10000) / 10000;
   };
 
   const triangles = [];
@@ -147,7 +147,7 @@ export function MosaicDivider({
       const x = c * cellSize;
       const y = r * cellSize;
       const s = cellSize * 0.85;
-      const opacity = 0.15 + seed(r * cols + c + 999) * 0.6;
+      const opacity = Math.round((0.15 + seed(r * cols + c + 999) * 0.6) * 10000) / 10000;
       triangles.push(
         <polygon
           key={`${r}-${c}`}
