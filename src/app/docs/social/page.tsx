@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import Image from "next/image";
-import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { useI18n } from "@/lib/i18n";
@@ -21,6 +20,7 @@ export default function SocialPage() {
   const [lightbox, setLightbox] = useState<number | null>(null);
   const [articles, setArticles] = useState<NewsArticle[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selected, setSelected] = useState<NewsArticle | null>(null);
 
   useEffect(() => {
     setLoading(true);
@@ -72,7 +72,7 @@ export default function SocialPage() {
               <p className="mb-6 text-xs font-semibold uppercase tracking-widest text-tam-black/30">{t("nav.docs.news")}</p>
               <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
                 {articles.map((article) => (
-                  <Link key={article.id} href={`/docs/news/${article.documentId}`} className="flex flex-col overflow-hidden rounded-2xl border border-tam-grey/40 pb-4 transition-all hover:border-tam-blue/20 hover:shadow-md">
+                  <button key={article.id} onClick={() => setSelected(article)} className="flex flex-col text-left overflow-hidden rounded-2xl border border-tam-grey/40 pb-4 transition-all hover:border-tam-blue/20 hover:shadow-md">
                     {article.cover?.url && (
                       <div className="relative h-48 w-full shrink-0">
                         <Image
@@ -93,7 +93,7 @@ export default function SocialPage() {
                         <p className="mt-2 text-sm leading-relaxed text-tam-black/60">{article.summary}</p>
                       )}
                     </div>
-                  </Link>
+                  </button>
                 ))}
               </div>
             </div>
@@ -143,6 +143,37 @@ export default function SocialPage() {
           <p className="absolute bottom-4 left-1/2 -translate-x-1/2 text-sm text-white/50">
             {lightbox + 1} / {PHOTOS.length}
           </p>
+        </div>
+      )}
+
+      {/* Article modal */}
+      {selected && (
+        <div className="fixed inset-0 z-200 flex items-center justify-center bg-tam-black/60 backdrop-blur-sm p-4" onClick={() => setSelected(null)}>
+          <div className="relative w-full max-w-3xl max-h-[90vh] overflow-y-auto rounded-2xl bg-white p-8 shadow-xl" onClick={(e) => e.stopPropagation()}>
+            <button onClick={() => setSelected(null)} className="absolute top-4 right-4 flex h-9 w-9 items-center justify-center rounded-full bg-tam-grey/10 text-tam-black/40 transition-colors hover:bg-tam-grey/20 hover:text-tam-black" aria-label="Close">
+              <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+            <span className="text-xs text-tam-black/30">{new Date(selected.publishedAt).toLocaleDateString()}</span>
+            <h2 className="mt-1 mb-6 text-xl font-semibold tracking-tight text-tam-black pr-10 sm:text-2xl">{selected.title}</h2>
+            {selected.cover?.url && (
+              <div className="relative mb-6 aspect-video w-full overflow-hidden rounded-xl">
+                <Image src={strapiMedia(selected.cover.formats?.large?.url || selected.cover.url)} alt={selected.cover.alternativeText || selected.title} fill className="object-cover" sizes="(max-width: 768px) 100vw, 768px" />
+              </div>
+            )}
+            {selected.summary && <p className="mb-4 text-sm leading-relaxed text-tam-black/70">{selected.summary}</p>}
+            {selected.images && selected.images.length > 0 && (
+              <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-3">
+                {selected.images.map((img, i) => (
+                  <div key={i} className="relative aspect-square overflow-hidden rounded-xl">
+                    <Image src={strapiMedia(img.formats?.medium?.url || img.url)} alt={img.alternativeText || `${selected.title} ${i + 1}`} fill className="object-cover" sizes="(max-width: 640px) 50vw, 33vw" />
+                  </div>
+                ))}
+              </div>
+            )}
+            {selected.content && <div className="text-sm leading-relaxed text-tam-black/70 whitespace-pre-line">{selected.content}</div>}
+          </div>
         </div>
       )}
 
