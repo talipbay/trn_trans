@@ -1,6 +1,6 @@
 import NewsArticleClient from "./client";
 
-export const dynamicParams = true;
+export const dynamicParams = false;
 
 export function generateStaticParams() {
   return [];
