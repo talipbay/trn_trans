@@ -109,7 +109,7 @@ export default function Navbar() {
           </div>
 
           {isHome ? (
-            <a href="#contacts" className="rounded-full bg-white px-5 py-2 text-sm font-semibold leading-none text-tam-blue transition-colors hover:bg-white/90">{t("nav.contact_us")}</a>
+            <a href="#contact-form" className="rounded-full bg-white px-5 py-2 text-sm font-semibold leading-none text-tam-blue transition-colors hover:bg-white/90">{t("nav.contact_us")}</a>
           ) : (
             <button onClick={() => setModalOpen(true)} className="rounded-full bg-white px-5 py-2 text-sm font-semibold leading-none text-tam-blue transition-colors hover:bg-white/90">{t("nav.contact_us")}</button>
           )}
@@ -163,7 +163,7 @@ export default function Navbar() {
             </div>
 
             {isHome ? (
-              <a href="#contacts" onClick={() => setOpen(false)} className="mt-2 rounded-full bg-white px-5 py-2.5 text-center text-sm font-semibold text-tam-blue">{t("nav.contact_us")}</a>
+              <a href="#contact-form" onClick={() => setOpen(false)} className="mt-2 rounded-full bg-white px-5 py-2.5 text-center text-sm font-semibold text-tam-blue">{t("nav.contact_us")}</a>
             ) : (
               <button onClick={() => { setOpen(false); setModalOpen(true); }} className="mt-2 rounded-full bg-white px-5 py-2.5 text-center text-sm font-semibold text-tam-blue">{t("nav.contact_us")}</button>
             )}

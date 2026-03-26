@@ -193,14 +193,14 @@ export default function Home() {
         {/* Scroll down button */}
         <button
           onClick={handleScrollDown}
-          className="absolute bottom-6 left-1/2 z-10 -translate-x-1/2 flex flex-col items-center gap-2 group"
+          className="absolute bottom-2 left-1/2 z-10 -translate-x-1/2 flex flex-col items-center gap-2 group"
           aria-label="Scroll down"
         >
-          <span className="text-[10px] font-semibold uppercase tracking-[0.3em] text-white/50 transition-all group-hover:text-white/80 group-hover:tracking-[0.4em]">{t("hero.next")}</span>
+          <span className="text-sm font-extrabold uppercase tracking-[0.3em] text-white/80 transition-all group-hover:text-white group-hover:tracking-[0.4em]">{t("hero.next")}</span>
           <div className="flex flex-col items-center gap-1">
-            <div className="h-8 w-px bg-gradient-to-b from-transparent to-white/40" />
+            <div className="h-8 w-px bg-gradient-to-b from-transparent to-white/60" />
             <svg width="12" height="12" viewBox="0 0 12 12" fill="none" className="animate-bounce-slow">
-              <path d="M2 4l4 4 4-4" stroke="white" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" opacity="0.6" />
+              <path d="M2 4l4 4 4-4" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" opacity="0.8" />
             </svg>
           </div>
         </button>
